@@ -120,3 +120,7 @@ outputs/*.html
 outputs/*.csv
 outputs/*.json
 outputs/*.txt
+
+# Large visualization files
+**/multi_parameter_shark_map.html
+**/*map*.html
