@@ -1,0 +1,2 @@
+species,n_observations,model_auc,cv_accuracy_mean,n_hotspot_clusters,n_foraging_locations,high_suitability_cells
+Prionace glauca,7432,0.9999971118613477,0.9983077617005435,6,0,0
