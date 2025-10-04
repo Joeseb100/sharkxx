@@ -1,0 +1,38 @@
+{
+  "model_info": {
+    "type": "dict",
+    "algorithm": "Random Forest",
+    "gpu_accelerated": false,
+    "creation_date": "2025-10-05T01:08:34.326862",
+    "file_size_mb": 0.69
+  },
+  "features": {
+    "count": "Unknown",
+    "names": [],
+    "types": "Environmental + Spatial + Temporal"
+  },
+  "performance": {
+    "roc_auc": 0.0,
+    "cv_accuracy": 0.0,
+    "model_accuracy": 0.0
+  },
+  "training_data": {
+    "species": [
+      "Prionace glauca",
+      "Notorynchus cepedianus",
+      "Carcharodon carcharias"
+    ],
+    "geographic_extent": {
+      "lat_min": -34.73,
+      "lat_max": 48.85,
+      "lon_min": -73.76,
+      "lon_max": 32.9
+    },
+    "temporal_range": "2013-2024",
+    "total_observations": 10296
+  },
+  "prediction_example": {
+    "input_format": "Unknown",
+    "output_format": "probability (0-1) of shark presence"
+  }
+}

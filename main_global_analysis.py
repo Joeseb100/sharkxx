@@ -87,13 +87,13 @@ def main_global_analysis():
             continue
         
         # =====================================================================
-        # STEP 2: RANDOM FOREST TRAINING
+        # STEP 2: RANDOM FOREST TRAINING (WITH GPU ACCELERATION)
         # =====================================================================
         print("\n" + "┌" + "─" * 78 + "┐")
-        print("│ STEP 2/6: RANDOM FOREST TRAINING" + " " * 45 + "│")
+        print("│ STEP 2/6: RANDOM FOREST TRAINING (GPU ACCELERATED)" + " " * 25 + "│")
         print("└" + "─" * 78 + "┘")
         
-        model = SharkHabitatModel(n_estimators=500, max_depth=20)
+        model = SharkHabitatModel(n_estimators=500, max_depth=20, use_gpu=True)
         model.train(X, y, feature_names=X.columns.tolist())
         
         cv_results = model.cross_validate(X, y, cv=5)
@@ -289,7 +289,7 @@ def main_global_analysis():
         
         viz.add_hotspot_clusters(
             hotspots=cluster_hotspots['hotspots'],
-            top_n=min(15, len(cluster_hotspots['hotspots']))  # Show up to 15 hotspots
+            top_n=min(10, len(cluster_hotspots['hotspots']))  # Show up to 10 hotspots
         )
         
         viz.add_foraging_zones(

@@ -1,6 +1,6 @@
 """
 Random Forest Classifier for Shark Habitat Modeling
-Includes training, validation, and prediction capabilities
+Includes training, validation, and prediction capabilities with GPU support
 """
 
 import numpy as np
@@ -15,20 +15,73 @@ import joblib
 import warnings
 warnings.filterwarnings('ignore')
 
+# Try to import GPU-accelerated Random Forest
+try:
+    from cuml.ensemble import RandomForestClassifier as CuMLRandomForestClassifier
+    GPU_AVAILABLE = True
+    print("🚀 GPU acceleration available via cuML")
+except ImportError:
+    try:
+        import xgboost as xgb
+        GPU_AVAILABLE = True
+        print("🚀 GPU acceleration available via XGBoost")
+    except ImportError:
+        GPU_AVAILABLE = False
+        print("⚠️  GPU acceleration not available, using CPU")
+
 class SharkHabitatModel:
-    """Random Forest model for shark habitat suitability"""
+    """Random Forest model for shark habitat suitability with GPU support"""
     
-    def __init__(self, n_estimators=500, max_depth=20, random_state=42):
-        self.model = RandomForestClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            min_samples_split=10,
-            min_samples_leaf=5,
-            class_weight='balanced',  # Handle any class imbalance
-            random_state=random_state,
-            n_jobs=-1,  # Use all CPU cores
-            verbose=0
-        )
+    def __init__(self, n_estimators=500, max_depth=20, random_state=42, use_gpu=True):
+        self.use_gpu = use_gpu and GPU_AVAILABLE
+        
+        if self.use_gpu:
+            try:
+                # Try cuML first (RAPIDS)
+                from cuml.ensemble import RandomForestClassifier as CuMLRF
+                self.model = CuMLRF(
+                    n_estimators=n_estimators,
+                    max_depth=max_depth,
+                    min_samples_split=10,
+                    min_samples_leaf=5,
+                    random_state=random_state,
+                    n_streams=1
+                )
+                self.model_type = "cuML_GPU"
+                print("🚀 Using cuML GPU-accelerated Random Forest")
+            except:
+                try:
+                    # Fallback to XGBoost GPU
+                    import xgboost as xgb
+                    self.model = xgb.XGBClassifier(
+                        n_estimators=n_estimators,
+                        max_depth=max_depth,
+                        learning_rate=0.1,
+                        random_state=random_state,
+                        tree_method='gpu_hist',
+                        gpu_id=0,
+                        eval_metric='logloss'
+                    )
+                    self.model_type = "XGBoost_GPU"
+                    print("🚀 Using XGBoost GPU-accelerated classifier")
+                except:
+                    self.use_gpu = False
+        
+        if not self.use_gpu:
+            # CPU fallback
+            self.model = RandomForestClassifier(
+                n_estimators=n_estimators,
+                max_depth=max_depth,
+                min_samples_split=10,
+                min_samples_leaf=5,
+                class_weight='balanced',
+                random_state=random_state,
+                n_jobs=-1,  # Use all CPU cores
+                verbose=0
+            )
+            self.model_type = "sklearn_CPU"
+            print("💻 Using CPU-based Random Forest (all cores)")
+        
         self.feature_names = None
         self.trained = False
         
@@ -46,12 +99,33 @@ class SharkHabitatModel:
         print(f"  Presence: {y.sum()} ({y.sum()/len(y)*100:.1f}%)")
         print(f"  Absence: {(1-y).sum()} ({(1-y).sum()/len(y)*100:.1f}%)")
         
-        print(f"\nModel parameters:")
-        print(f"  n_estimators: {self.model.n_estimators}")
-        print(f"  max_depth: {self.model.max_depth}")
-        print(f"  class_weight: {self.model.class_weight}")
+        print(f"\nModel configuration:")
+        print(f"  Type: {self.model_type}")
+        if hasattr(self.model, 'n_estimators'):
+            print(f"  n_estimators: {self.model.n_estimators}")
+        if hasattr(self.model, 'max_depth'):
+            print(f"  max_depth: {self.model.max_depth}")
+        if hasattr(self.model, 'class_weight'):
+            print(f"  class_weight: {self.model.class_weight}")
+        if self.use_gpu:
+            print(f"  🚀 GPU acceleration: ENABLED")
+        else:
+            print(f"  💻 Using CPU cores: {self.model.n_jobs if hasattr(self.model, 'n_jobs') else 'all'}")
+            if hasattr(self.model, 'class_weight'):
+                print(f"  class_weight: {self.model.class_weight}")
         
         print("\nTraining Random Forest...")
+        
+        # Handle class balancing for XGBoost
+        if self.model_type == "XGBoost_GPU":
+            # Calculate scale_pos_weight for XGBoost (equivalent to balanced class weights)
+            neg_count = (y == 0).sum()
+            pos_count = (y == 1).sum()
+            scale_pos_weight = neg_count / pos_count if pos_count > 0 else 1
+            self.model.set_params(scale_pos_weight=scale_pos_weight)
+            print(f"  XGBoost scale_pos_weight: {scale_pos_weight:.3f}")
+        
+        # Fit the model
         self.model.fit(X, y)
         self.trained = True
         

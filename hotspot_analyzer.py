@@ -139,9 +139,14 @@ class HotspotAnalyzer:
         # Sort by size
         hotspots = sorted(hotspots, key=lambda x: x['size'], reverse=True)
         
-        print(f"\nTop 5 hotspots:")
-        for i, hs in enumerate(hotspots[:5]):
-            print(f"  #{i+1}: ({hs['center_lat']:.3f}, {hs['center_lon']:.3f}) - {hs['size']} sharks")
+        print(f"\nTop 10 hotspots:")
+        for i, hs in enumerate(hotspots[:10]):
+            pct = 100 * hs['size'] / len(coords)
+            print(f"  #{i+1:2d}: ({hs['center_lat']:7.3f}, {hs['center_lon']:8.3f}) - {hs['size']:5d} sharks ({pct:5.1f}%)")
+        
+        if len(hotspots) > 10:
+            remaining = sum(hs['size'] for hs in hotspots[10:])
+            print(f"  ... and {len(hotspots)-10} smaller clusters with {remaining} sharks")
         
         self.hotspots_clusters = {
             'labels': labels,
