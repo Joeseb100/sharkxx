@@ -116,11 +116,11 @@ Thumbs.db
 
 # Output files that can be regenerated
 outputs/*.png
-outputs/*.html
 outputs/*.csv
 outputs/*.json
 outputs/*.txt
 
-# Large visualization files
+# Large visualization files - exclude large maps but allow specific interactive map
 **/multi_parameter_shark_map.html
-**/*map*.html
+outputs/All_Sharks_global_habitat_map.html
+# Allow shark_habitat_interactive_map.html (smaller file)
