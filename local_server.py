@@ -109,6 +109,64 @@ MAIN_PAGE_HTML = """
             background: linear-gradient(135deg, #0c2e4e 0%, #1a5f7a 100%);
             color: white;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated shark background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1560275619-4662e36fa65c?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Animated swimming shark silhouette */
+        body::after {
+            content: '🦈';
+            position: fixed;
+            font-size: 80px;
+            opacity: 0.15;
+            z-index: -1;
+            animation: swimShark 45s linear infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 0 20px rgba(100,255,218,0.3));
+        }
+        
+        @keyframes swimShark {
+            0% {
+                left: -100px;
+                top: 20%;
+                transform: rotate(-10deg) scaleX(1);
+            }
+            25% {
+                top: 50%;
+            }
+            50% {
+                left: calc(100% + 100px);
+                top: 30%;
+                transform: rotate(-5deg) scaleX(1);
+            }
+            51% {
+                transform: rotate(10deg) scaleX(-1);
+            }
+            75% {
+                top: 60%;
+            }
+            100% {
+                left: -100px;
+                top: 20%;
+                transform: rotate(5deg) scaleX(-1);
+            }
         }
         
         .header {
@@ -136,6 +194,8 @@ MAIN_PAGE_HTML = """
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .features-grid {
@@ -174,8 +234,9 @@ MAIN_PAGE_HTML = """
         
         .maps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
+            align-items: stretch;
         }
         
         .map-card {
@@ -184,6 +245,19 @@ MAIN_PAGE_HTML = """
             padding: 25px;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100%;
+        }
+        
+        .map-card h3 {
+            margin-bottom: 12px;
+        }
+        
+        .map-card p {
+            flex-grow: 1;
+            margin-bottom: 8px;
         }
         
         .map-btn {
@@ -206,24 +280,98 @@ MAIN_PAGE_HTML = """
         .predictor {
             background: rgba(255,255,255,0.1);
             border-radius: 15px;
-            padding: 30px;
+            padding: 35px 25px;
             margin: 30px 0;
+            border: 1.5px solid rgba(100,255,218,0.1);
+            box-shadow: 0 2px 12px 0 rgba(100,255,218,0.08);
+        }
+        
+        .predictor h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .predictor > p {
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 10px;
         }
         
         .input-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 25px 0;
+            align-items: start;
+        }
+        
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .input-field label {
+            color: #64ffda;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
         }
         
         .input-group input {
-            padding: 12px;
+            padding: 14px 12px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             background: rgba(255,255,255,0.2);
             color: white;
-            font-size: 14px;
+            font-size: 15px;
+            border: 1.5px solid rgba(100,255,218,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        /* Style number input arrows/spinners */
+        .input-group input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        
+        .input-group input[type="number"]::-webkit-inner-spin-button,
+        .input-group input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(100,255,218,0.15) 0%, 
+                rgba(100,255,218,0.15) 50%, 
+                rgba(100,255,218,0.25) 50%, 
+                rgba(100,255,218,0.25) 100%);
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            opacity: 1;
+            position: relative;
+        }
+        
+        .input-group input[type="number"]::-webkit-inner-spin-button:hover,
+        .input-group input[type="number"]::-webkit-outer-spin-button:hover {
+            background: linear-gradient(to bottom, 
+                rgba(100,255,218,0.3) 0%, 
+                rgba(100,255,218,0.3) 50%, 
+                rgba(100,255,218,0.45) 50%, 
+                rgba(100,255,218,0.45) 100%);
+        }
+        
+        /* Firefox number input styling */
+        .input-group input[type="number"] {
+            padding-right: 30px;
+        }
+        
+        .input-group input:focus {
+            background: rgba(255,255,255,0.25);
+            border-color: #64ffda;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(100,255,218,0.2);
         }
         
         .input-group input::placeholder {
@@ -234,26 +382,34 @@ MAIN_PAGE_HTML = """
             background: linear-gradient(45deg, #ff6b35, #f39c12);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 45px;
             border-radius: 25px;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+            margin-top: 10px;
         }
         
         .predict-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+        
+        .predict-btn:active {
+            transform: scale(1.02);
         }
         
         .result {
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            margin-top: 25px;
+            padding: 25px 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
             text-align: center;
             font-size: 1.2em;
+            border: 1.5px solid rgba(100,255,218,0.2);
+            box-shadow: 0 2px 10px rgba(100,255,218,0.1);
         }
         
         .stats {
@@ -282,12 +438,95 @@ MAIN_PAGE_HTML = """
             background: rgba(0,0,0,0.3);
             margin-top: 40px;
         }
+        
+        /* Floating bubbles effect */
+        .container::before,
+        .container::after {
+            content: '';
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(100,255,218,0.4) 0%, rgba(100,255,218,0.1) 70%, transparent 100%);
+            border-radius: 50%;
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatBubbles 8s ease-in-out infinite;
+        }
+        
+        .container::before {
+            left: 15%;
+            animation-delay: 0s;
+        }
+        
+        .container::after {
+            left: 75%;
+            animation-delay: 3s;
+            width: 12px;
+            height: 12px;
+        }
+        
+        @keyframes floatBubbles {
+            0% {
+                bottom: 0;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+                transform: translateX(50px);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .maps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            .maps-section {
+                padding: 30px 20px;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .input-group {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .input-group {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .predictor {
+                padding: 20px 15px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🦈 Shark Habitat Analysis System</h1>
-        <p>Advanced Machine Learning for Marine Conservation</p>
+        <h1>🦈 Jaws Habitat Analysis System</h1>
     </div>
     
     <div class="container">
@@ -313,20 +552,20 @@ MAIN_PAGE_HTML = """
         
         <!-- Interactive Maps Section -->
         <div class="maps-section">
-            <h2 style="text-align: center; margin-bottom: 30px; color: #64ffda;">🗺️ Interactive Habitat Maps</h2>
+            <h2 style="text-align: center; margin-bottom: 30px; color: #64ffda;"> Interactive Habitat Maps</h2>
             <div class="maps-grid">
                 <div class="map-card">
-                    <h3>🌍 Global Habitat Map</h3>
+                    <h3> Global Habitat Map</h3>
                     <p>Complete worldwide analysis with hotspot detection and species distribution</p>
                     <a href="/map/global" class="map-btn" target="_blank">Open Global Map</a>
                 </div>
                 <div class="map-card">
-                    <h3>📊 Multi-Parameter Analysis</h3>
+                    <h3> Multi-Parameter Analysis</h3>
                     <p>Environmental factors: SST, Chlorophyll, Depth, Species filtering</p>
                     <a href="/map/parameters" class="map-btn" target="_blank">Open Parameter Map</a>
                 </div>
                 <div class="map-card">
-                    <h3>🔥 Original Analysis Map</h3>
+                    <h3> Original Analysis Map</h3>
                     <p>Classic habitat suitability with hotspot clusters and foraging zones</p>
                     <a href="/map/original" class="map-btn" target="_blank">Open Original Map</a>
                 </div>
@@ -335,50 +574,45 @@ MAIN_PAGE_HTML = """
         
         <!-- Live Prediction Tool -->
         <div class="predictor">
-            <h2 style="color: #64ffda; margin-bottom: 20px;">🎯 Live Habitat Prediction</h2>
+            <h2 style="color: #64ffda; margin-bottom: 20px;"> Live Habitat Prediction</h2>
             <p>Enter coordinates and environmental parameters to predict shark habitat suitability:</p>
             
             <div class="input-group">
-                <input type="number" id="lat" placeholder="Latitude (-90 to 90)" step="0.001" value="44.28">
-                <input type="number" id="lon" placeholder="Longitude (-180 to 180)" step="0.001" value="-63.17">
-                <input type="number" id="sst" placeholder="Sea Temperature (°C)" step="0.1" value="18.2">
-                <input type="number" id="chl" placeholder="Chlorophyll (mg/m³)" step="0.01" value="1.15">
-                <input type="number" id="depth" placeholder="Depth (m)" step="1" value="485">
-                <input type="number" id="distance" placeholder="Distance to Coast (km)" step="1" value="25">
+                <div class="input-field">
+                    <label for="lat">Latitude</label>
+                    <input type="number" id="lat" placeholder="-90 to 90" step="0.001" value="44.28">
+                </div>
+                <div class="input-field">
+                    <label for="lon">Longitude</label>
+                    <input type="number" id="lon" placeholder="-180 to 180" step="0.001" value="-63.17">
+                </div>
+                <div class="input-field">
+                    <label for="sst">Sea Temperature (°C)</label>
+                    <input type="number" id="sst" placeholder="Temperature" step="0.1" value="18.2">
+                </div>
+                <div class="input-field">
+                    <label for="chl">Chlorophyll (mg/m³)</label>
+                    <input type="number" id="chl" placeholder="Chlorophyll" step="0.01" value="1.15">
+                </div>
+                <div class="input-field">
+                    <label for="depth">Depth (m)</label>
+                    <input type="number" id="depth" placeholder="Depth" step="1" value="485">
+                </div>
+                <div class="input-field">
+                    <label for="distance">Distance to Coast (km)</label>
+                    <input type="number" id="distance" placeholder="Distance" step="1" value="25">
+                </div>
             </div>
             
             <div style="text-align: center;">
-                <button class="predict-btn" onclick="predictHabitat()">🔮 Predict Shark Habitat</button>
+                <button class="predict-btn" onclick="predictHabitat()"> Predict Shark Habitat</button>
             </div>
             
             <div id="prediction-result" class="result" style="display: none;"></div>
         </div>
         
-        <!-- System Features -->
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>🤖 XGBoost ML Model</h3>
-                <p>GPU-accelerated gradient boosting with 99.8% accuracy. Trained on 10,335 global shark observations using advanced ensemble methods.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🌊 Real Environmental Data</h3>
-                <p>Sea surface temperature, chlorophyll-a, bathymetry, and spatial features from satellite observations and oceanographic databases.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🔥 Hotspot Detection</h3>
-                <p>Automated identification of shark aggregation zones using KDE and DBSCAN clustering algorithms with geographic analysis.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🗺️ Interactive Visualization</h3>
-                <p>Multi-layer maps with species filtering, environmental overlays, and real-time habitat suitability predictions.</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p>🦈 Shark Habitat Analysis System - Built with XGBoost, Flask, and Marine Science</p>
-        <p style="opacity: 0.7;">Conservation through Advanced Machine Learning</p>
-    </div>
+      
+   
     
     <script>
         async function predictHabitat() {
@@ -432,7 +666,7 @@ MAIN_PAGE_HTML = """
                 
                 const resultDiv = document.getElementById('prediction-result');
                 resultDiv.innerHTML = `
-                    <h3>🎯 Habitat Prediction Result</h3>
+                    <h3> Habitat Prediction Result</h3>
                     <div style="font-size: 2em; color: ${color}; margin: 15px 0;">${percentage}%</div>
                     <div style="font-size: 1.3em; color: ${color};">${habitatClass} Habitat Suitability</div>
                     <div style="margin-top: 15px; opacity: 0.8;">
